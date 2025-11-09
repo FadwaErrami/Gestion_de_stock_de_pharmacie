@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Pharmacie</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { background-color: #f8f9fa; }
+        .card { margin-bottom: 20px; border: none; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .card-header { font-weight: bold; }
+        .table th { background-color: #f8f9fa; }
+        .action-btn { margin: 2px; }
+    </style>
+</head>
+<body>
+<div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="text-primary">
+                <i class="fas fa-clinic-medical"></i> Dashboard Pharmacie
+            </h1>
+        </div>
+    </div>
+
+    <!-- Cartes de statistiques -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card text-white bg-primary">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 th:text="${categories.size()}">0</h4>
+                            <p>Catégories</p>
+                        </div>
+                        <i class="fas fa-tags fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-success">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 th:text="${fournisseurs.size()}">0</h4>
+                            <p>Fournisseurs</p>
+                        </div>
+                        <i class="fas fa-truck fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-warning">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 th:text="${produits.size()}">0</h4>
+                            <p>Produits</p>
+                        </div>
+                        <i class="fas fa-pills fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Catégories -->
+    <div class="card">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <span>Catégories</span>
+            <button class="btn btn-light btn-sm" data-bs-toggle="modal" data-bs-target="#modalAddCategorie">
+                <i class="fas fa-plus"></i> Ajouter
+            </button>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nom</th>
+                            <th>Description</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="cat : ${categories}">
+                            <td th:text="${cat.id}"></td>
+                            <td th:text="${cat.nom}"></td>
+                            <td th:text="${cat.description}"></td>
+                            <td>
+                                <button class="btn btn-warning btn-sm action-btn" 
+                                        data-bs-toggle="modal" 
+                                        th:attr="data-bs-target='#modalEditCategorie' + ${cat.id}">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <a th:href="@{'/categories/delete/' + ${cat.id}}" 
+                                   class="btn btn-danger btn-sm action-btn"
+                                   onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette catégorie ?')">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fournisseurs -->
+    <div class="card">
+        <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+            <span>Fournisseurs</span>
+            <button class="btn btn-light btn-sm" data-bs-toggle="modal" data-bs-target="#modalAddFournisseur">
+                <i class="fas fa-plus"></i> Ajouter
+            </button>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nom</th>
+                            <th>Contact</th>
+                            <th>Adresse</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="f : ${fournisseurs}">
+                            <td th:text="${f.id}"></td>
+                            <td th:text="${f.nom}"></td>
+                            <td th:text="${f.contact}"></td>
+                            <td th:text="${f.adresse}"></td>
+                            <td>
+                                <button class="btn btn-warning btn-sm action-btn" 
+                                        data-bs-toggle="modal" 
+                                        th:attr="data-bs-target='#modalEditFournisseur' + ${f.id}">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <a th:href="@{'/fournisseurs/delete/' + ${f.id}}" 
+                                   class="btn btn-danger btn-sm action-btn"
+                                   onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce fournisseur ?')">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Produits -->
+    <div class="card">
+        <div class="card-header bg-warning text-white d-flex justify-content-between align-items-center">
+            <span>Produits</span>
+            <button class="btn btn-light btn-sm" data-bs-toggle="modal" data-bs-target="#modalAddProduit">
+                <i class="fas fa-plus"></i> Ajouter
+            </button>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nom</th>
+                            <th>Prix</th>
+                            <th>Code Barre</th>
+                            <th>Catégorie</th>
+                            <th>Fournisseur</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="p : ${produits}">
+                            <td th:text="${p.id}"></td>
+                            <td th:text="${p.nom}"></td>
+                            <td th:text="${p.prix} + ' €'"></td>
+                            <td th:text="${p.codeBarre}"></td>
+                            <td th:text="${p.categorie?.nom}"></td>
+                            <td th:text="${p.fournisseur?.nom}"></td>
+                            <td>
+                                <button class="btn btn-warning btn-sm action-btn" 
+                                        data-bs-toggle="modal" 
+                                        th:attr="data-bs-target='#modalEditProduit' + ${p.id}">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <a th:href="@{'/produits/delete/' + ${p.id}}" 
+                                   class="btn btn-danger btn-sm action-btn"
+                                   onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce produit ?')">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Ajouter Catégorie -->
+<div class="modal fade" id="modalAddCategorie" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form th:action="@{/categories/add}" method="post">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title">Ajouter Catégorie</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Nom</label>
+                        <input type="text" class="form-control" name="nom" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        <textarea class="form-control" name="description" required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-primary">Ajouter</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Modifier Catégorie -->
+<div th:each="cat : ${categories}" class="modal fade" th:id="'modalEditCategorie' + ${cat.id}" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form th:action="@{'/categories/edit/' + ${cat.id}}" method="post">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title">Modifier Catégorie</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Nom</label>
+                        <input type="text" class="form-control" name="nom" th:value="${cat.nom}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        <textarea class="form-control" name="description" th:text="${cat.description}" required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-primary">Modifier</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Ajouter Fournisseur -->
+<div class="modal fade" id="modalAddFournisseur" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form th:action="@{/fournisseurs/add}" method="post">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title">Ajouter Fournisseur</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Nom</label>
+                        <input type="text" class="form-control" name="nom" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Contact</label>
+                        <input type="text" class="form-control" name="contact" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Adresse</label>
+                        <textarea class="form-control" name="adresse" required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-success">Ajouter</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Modifier Fournisseur -->
+<div th:each="f : ${fournisseurs}" class="modal fade" th:id="'modalEditFournisseur' + ${f.id}" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form th:action="@{'/fournisseurs/edit/' + ${f.id}}" method="post">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title">Modifier Fournisseur</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Nom</label>
+                        <input type="text" class="form-control" name="nom" th:value="${f.nom}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Contact</label>
+                        <input type="text" class="form-control" name="contact" th:value="${f.contact}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Adresse</label>
+                        <textarea class="form-control" name="adresse" th:text="${f.adresse}" required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-success">Modifier</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Ajouter Produit -->
+<div class="modal fade" id="modalAddProduit" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form th:action="@{/produits/add}" method="post">
+                <div class="modal-header bg-warning text-white">
+                    <h5 class="modal-title">Ajouter Produit</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Nom</label>
+                        <input type="text" class="form-control" name="nom" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Prix</label>
+                        <input type="number" class="form-control" name="prix" step="0.01" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Code Barre</label>
+                        <input type="text" class="form-control" name="codeBarre" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Catégorie</label>
+                        <select class="form-select" name="categorieId" required>
+                            <option value="">Sélectionner une catégorie</option>
+                            <option th:each="c : ${categories}" th:value="${c.id}" th:text="${c.nom}"></option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Fournisseur</label>
+                        <select class="form-select" name="fournisseurId" required>
+                            <option value="">Sélectionner un fournisseur</option>
+                            <option th:each="f : ${fournisseurs}" th:value="${f.id}" th:text="${f.nom}"></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-warning">Ajouter</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Modifier Produit -->
+<div th:each="p : ${produits}" class="modal fade" th:id="'modalEditProduit' + ${p.id}" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form th:action="@{'/produits/edit/' + ${p.id}}" method="post">
+                <div class="modal-header bg-warning text-white">
+                    <h5 class="modal-title">Modifier Produit</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Nom</label>
+                        <input type="text" class="form-control" name="nom" th:value="${p.nom}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Prix</label>
+                        <input type="number" class="form-control" name="prix" th:value="${p.prix}" step="0.01" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Code Barre</label>
+                        <input type="text" class="form-control" name="codeBarre" th:value="${p.codeBarre}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Catégorie</label>
+                        <select class="form-select" name="categorieId" required>
+                            <option th:each="c : ${categories}" 
+                                    th:value="${c.id}" 
+                                    th:text="${c.nom}"
+                                    th:selected="${p.categorie != null and c.id == p.categorie.id}"></option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Fournisseur</label>
+                        <select class="form-select" name="fournisseurId" required>
+                            <option th:each="f : ${fournisseurs}" 
+                                    th:value="${f.id}" 
+                                    th:text="${f.nom}"
+                                    th:selected="${p.fournisseur != null and f.id == p.fournisseur.id}"></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-warning">Modifier</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
