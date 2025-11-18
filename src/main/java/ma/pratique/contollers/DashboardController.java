@@ -23,7 +23,7 @@ public class DashboardController {
     @Autowired
     private ProduitRepository produitRepository;
 
-    // 🏠 Page principale du dashboard
+    //  Page principale du dashboard
     @GetMapping("/dashboard")
     public String dashboard(Model model) {
         model.addAttribute("categories", categorieRepository.findAll());
